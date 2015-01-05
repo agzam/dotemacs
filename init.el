@@ -1,11 +1,12 @@
-
 (defgroup dotemacs nil
   "Custom configuration for dotemacs."
   :group 'local)
 
+
 (defcustom dotemacs-cache-directory (concat user-emacs-directory ".cache/")
   "The storage location for various persistent files."
   :group 'dotemacs)
+
 
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -59,14 +60,23 @@
     init-lisp
     init-markdown
 
+;;    thesaurus
+    synonyms
+    evernote-mode
     init-misc
     init-evil
     init-bindings
     init-macros
-
+    init-haskell
     init-overrides)
   "Set of modules enabled in dotemacs."
   :group 'dotemacs)
+
+
+; (setq  ido-ignore-buffers
+;      '("\\` " "^\*Back" ".*Completion" "^\*Ido" "^\*trace"
+;        "^\*compilation" "^\*GTAGS" "^session\.*" "^\*Compile-log"))
+
 
 (add-to-list 'after-init-hook
              (lambda ()

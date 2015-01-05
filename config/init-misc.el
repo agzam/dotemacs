@@ -91,5 +91,45 @@
     (require-package 'exec-path-from-shell)
     (exec-path-from-shell-initialize)))
 
+;; Evernote
+(setq evernote-username "plotnick")
+(setq evernote-developer-token "S=s9:U=1032d0:E=1519fc6f803:C=14a4815c938:P=1cd:A=en-devtoken:V=2:H=60020889830e06533a55a13fc1d565e7")
+(setq evernote-mode-display-menu nil)
+
+
+;; Thesaurus
+
+;; (setq thesaurus-bhl-api-key "268e6dcef65d60cea2f54799ec62eec1") 
+
+(setq synonyms-file        "~/.emacs.d/config/mthes10/mthesaur.txt")
+(setq synonyms-cache-file  "~/.emacs.d/.cache/mtheasur.txt.cache")
+
+(defun replace-word-other-window ()
+  (interactive)
+  (let ((sym (thing-at-point 'symbol))
+        bnd)
+    (other-window 1)
+    (if (setq bnd (bounds-of-thing-at-point 'symbol))
+        (progn
+          (delete-region (car bnd) (cdr bnd))
+          (insert sym))
+      (message "no symbol at point in other window"))
+    (other-window -1)))
+
+
+;; Ignore Messages buffer for next-buffer/previous-buffer commands
+(defadvice next-buffer (after avoid-messages-buffer-in-next-buffer)
+  "Advice around `next-buffer' to avoid going into the *Messages* buffer."
+  (when (string= "*Messages*" (buffer-name))
+    (next-buffer)))
+
+(defadvice previous-buffer (after avoid-messages-buffer-in-previous-buffer)
+  "Advice around `previous-buffer' to avoid going into the *Messages* buffer."
+  (when (string= "*Messages*" (buffer-name))
+    (previous-buffer)))
+
+(ad-activate 'next-buffer)
+(ad-activate 'previous-buffer)
+
 
 (provide 'init-misc)

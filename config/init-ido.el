@@ -9,6 +9,12 @@
 (ido-mode t)
 (ido-everywhere t)
 
+;; If I don't define them here it would throw bunch of warnings
+(defvar ido-context-switch-command nil)
+(defvar ido-cur-item nil)
+(defvar ido-default-item nil)
+(defvar ido-cur-list nil)
+
 (require-package 'ido-ubiquitous)
 (ido-ubiquitous-mode t)
 
