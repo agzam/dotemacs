@@ -120,6 +120,10 @@
   (define-key evil-motion-state-map "k" 'evil-previous-visual-line)
 
   (define-key evil-normal-state-map (kbd "Q") 'my-window-killer)
+  (define-key evil-normal-state-map (kbd "C-s C-t") 'synonyms-no-read)
+  (define-key evil-normal-state-map (kbd "C-s C-d") 'synonyms-definition-no-read)
+  (evil-define-key 'visual synonyms-mode-map (kbd "R") 'replace-word-other-window)
+  (evil-define-key 'normal synonyms-mode-map (kbd "R") 'replace-word-other-window)
   (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
 
   (define-key evil-visual-state-map (kbd ", e") 'eval-region)

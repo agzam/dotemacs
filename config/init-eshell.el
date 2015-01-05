@@ -58,7 +58,7 @@
           (propertize (my-current-git-branch) 'face 'font-lock-function-name-face)
           (propertize " $ " 'face 'font-lock-constant-face)))
 
-
+(setq shell-file-name "/usr/local/bin/zsh")
 ;; em-prompt
 (setq eshell-prompt-function 'my-eshell-prompt)
 
