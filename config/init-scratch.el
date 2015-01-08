@@ -3,7 +3,7 @@
 (setq initial-scratch-message nil)
 
 (defvar persistent-scratch-filename 
-    "~/.emacs.d/.cache/.scratch"
+    "~/.emacs.d/.cache/.scratch-backups/last"
     "Location of *scratch* file contents for persistent-scratch.")
 
 (defvar persistent-scratch-backup-directory 
@@ -18,7 +18,7 @@
   (concat 
    persistent-scratch-backup-directory 
    (replace-regexp-in-string 
-     (regexp-quote " ") "-" (current-time-string))))
+     (regexp-quote " ") "" (current-time-string))))
 
 (defun save-persistent-scratch ()
   "Write the contents of *scratch* to the file name
