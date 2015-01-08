@@ -987,7 +987,7 @@ APPENDP and MOREP are free here."
     ;; Change `.' to `[^,]' in `search-text', so we don't mix terms.
     (setq search-text  (replace-regexp-in-string "\\." "[^,]" search-text nil t))
     (synonyms-lookup search-text appendp morep)
-    (other-window 1)))
+    (other-window -1)))
 
 ;;;###autoload
 (defun synonyms-match-more ()

@@ -62,20 +62,17 @@
 
 ;;    thesaurus
     synonyms
+    init-text
     evernote-mode
     init-misc
     init-evil
     init-bindings
     init-macros
     init-haskell
+    init-scratch
     init-overrides)
   "Set of modules enabled in dotemacs."
   :group 'dotemacs)
-
-
-; (setq  ido-ignore-buffers
-;      '("\\` " "^\*Back" ".*Completion" "^\*Ido" "^\*trace"
-;        "^\*compilation" "^\*GTAGS" "^session\.*" "^\*Compile-log"))
 
 
 (add-to-list 'after-init-hook
