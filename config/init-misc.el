@@ -92,6 +92,7 @@
     (require-package 'exec-path-from-shell)
     (exec-path-from-shell-initialize)))
 
+(setq-default line-spacing 5)
 
 ;; Evernote
 (setq evernote-username "plotnick")

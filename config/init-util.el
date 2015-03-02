@@ -112,7 +112,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   "Create a new scratch buffer."
   (interactive)
   (switch-to-buffer (get-buffer-create "*scratch*"))
-  (emacs-lisp-mode))
+  (text-mode))
 
 
 (defun my-insert-last-kbd-macro ()

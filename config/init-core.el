@@ -149,6 +149,8 @@
 (setq-default
  indent-tabs-mode nil)
 
+((nil . ((indent-tabs-mode . t)
+    (tab-width . 4)))
 
 (defun my-find-file-check-large-file ()
   (when (> (buffer-size) (* 1024 1024))

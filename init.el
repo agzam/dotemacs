@@ -41,7 +41,7 @@
     init-smartparens
     ;; init-autopair
 
-    init-yasnippet
+    ; init-yasnippet
     ;; init-auto-complete
     init-company
 
@@ -68,8 +68,8 @@
     init-evil
     init-bindings
     init-macros
-    init-haskell
     init-scratch
+    init-haskell
     init-overrides)
   "Set of modules enabled in dotemacs."
   :group 'dotemacs)
