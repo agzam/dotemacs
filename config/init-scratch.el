@@ -39,6 +39,8 @@
         (delete-region (point-min) (point-max))
         (shell-command (format "cat %s" persistent-scratch-filename) (current-buffer)))))
 
+(call-interactively 'flyspell-english)
+
 (load-persistent-scratch)
 
 (push #'save-persistent-scratch kill-emacs-hook)
