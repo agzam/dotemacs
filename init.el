@@ -1,82 +1,81 @@
+
 (defgroup dotemacs nil
   "Custom configuration for dotemacs."
   :group 'local)
-
 
 (defcustom dotemacs-cache-directory (concat user-emacs-directory ".cache/")
   "The storage location for various persistent files."
   :group 'dotemacs)
 
+(defcustom dotemacs-completion-engine
+  'company
+  "The completion engine the use."
+  :type '(radio
+          (const :tag "company-mode" company)
+          (const :tag "auto-complete-mode" auto-complete))
+  :group 'dotemacs)
 
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (unless (display-graphic-p) (menu-bar-mode -1))
 
-(add-to-list 'load-path (concat user-emacs-directory "config"))
+(add-to-list 'load-path (concat user-emacs-directory "/config"))
+(let ((base (concat user-emacs-directory "/elisp")))
+  (add-to-list 'load-path base)
+  (dolist (dir (directory-files base t "^[^.]"))
+    (when (file-directory-p dir)
+      (add-to-list 'load-path dir))))
 
 (require 'cl)
 (require 'init-packages)
 (require 'init-util)
 
-(let ((base (concat user-emacs-directory "elisp")))
-  (add-to-list 'load-path base)
-  (dolist (dir (directory-files base t))
-    (when (and (file-directory-p dir)
-               (not (equal (file-name-nondirectory dir) ".."))
-               (not (equal (file-name-nondirectory dir) ".")))
-      (add-to-list 'load-path dir))))
-
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
 
-(defcustom dotemacs-modules
-  '(init-core
+(let ((debug-on-error t))
+  (require 'init-core)
 
-    init-eshell
-    init-org
-    init-erc
-    init-eyecandy
+  (require 'init-eshell)
+  (require 'init-erc)
 
-    init-smartparens
+  (if (eq dotemacs-completion-engine 'company)
+      (require 'init-company)
+    (require 'init-auto-complete))
+
+  (require 'init-lisp)
+  (require 'init-org)
+  (require 'init-vim)
+  (require 'init-stylus)
+  (require 'init-js)
+  (require 'init-go)
+  (require 'init-web)
+  (require 'init-markup)
+
+  (require 'init-projectile)
+  (require 'init-helm)
+  (require 'init-ido)
+  (require 'init-vcs)
+  (require 'init-flycheck)
+  (require 'init-yasnippet)
+  (require 'init-smartparens)
+  (require 'init-misc)
+
+  (require 'init-evil)
+  (require 'init-macros)
+  (require 'init-eyecandy)
+  (require 'init-overrides)
+
+  (require 'synonyms)
+  (require 'init-text)
+  (require 'evernote-mode)
+  (require 'init-scratch)
+  (require 'init-haskell)
+
+  (require 'init-bindings))
+  
     ;; init-autopair
-
-    ; init-yasnippet
-    ;; init-auto-complete
-    init-company
-
-    init-projectile
-    init-helm
-    init-ido
-
-    init-vcs
-    init-flycheck
-
-    init-vim
-    init-stylus
-    init-js
-    ;; init-go
-    init-web
-    init-lisp
-    init-markdown
-
-;;    thesaurus
-    synonyms
-    init-text
-    evernote-mode
-    init-misc
-    init-evil
-    init-bindings
-    init-macros
-    init-scratch
-    init-haskell
-    init-overrides)
-  "Set of modules enabled in dotemacs."
-  :group 'dotemacs)
+    ;; init-markdown
 
 
-(add-to-list 'after-init-hook
-             (lambda ()
-               (dolist (module dotemacs-modules)
-                 (with-demoted-errors "######## INIT-ERROR ######## %s"
-                   (require module)))))

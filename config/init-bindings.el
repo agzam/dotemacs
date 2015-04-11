@@ -9,26 +9,9 @@
 (require 'guide-key)
 (setq guide-key/guide-key-sequence '("C-x" "C-c" ","))
 (setq guide-key/recursive-key-sequence-flag t)
+(setq guide-key/popup-window-position 'bottom)
+(setq guide-key/idle-delay 0.2)
 (guide-key-mode 1)
-
-
-(require-package 'guide-key-tip)
-(require 'guide-key-tip)
-(setq guide-key-tip/enabled t)
-
-
-(after "helm-autoloads"
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-m") 'helm-M-x)
-  (global-set-key (kbd "C-c C-m") 'helm-M-x))
-
-
-(setq my-eshell-buffer-count 0)
-(defun my-new-eshell-split ()
-  (interactive)
-  (split-window)
-  (setq my-eshell-buffer-count (+ 1 my-eshell-buffer-count))
-  (eshell my-eshell-buffer-count))
 
 
 (after 'evil
@@ -37,7 +20,7 @@
   (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
   (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
 
-  (after "evil-leader-autoloads"
+  (after 'evil-leader
     (evil-leader/set-leader ",")
     (evil-leader/set-key
       "w" 'save-buffer
@@ -54,6 +37,9 @@
       "V" (bind (term "vim"))
       "h" help-map
       "h h" 'help-for-help-internal)
+
+    (after "paradox-autoloads"
+      (evil-leader/set-key "P" 'paradox-list-packages))
 
     (after "magit-autoloads"
       (evil-leader/set-key
@@ -81,8 +67,9 @@
   (after "helm-autoloads"
     (define-key evil-visual-state-map (kbd "SPC SPC") 'helm-M-x)
     (define-key evil-normal-state-map (kbd "SPC SPC") 'helm-M-x)
-    (define-key evil-normal-state-map (kbd "SPC b") 'helm-buffers-list)
+    (define-key evil-normal-state-map (kbd "SPC b") 'helm-mini)
     (define-key evil-normal-state-map (kbd "g b") 'helm-mini)
+    (define-key evil-normal-state-map (kbd "SPC a") 'helm-apropos)
     (define-key evil-normal-state-map (kbd "SPC f") 'helm-find-files)
     (define-key evil-normal-state-map (kbd "SPC o") 'helm-semantic-or-imenu)
     (define-key evil-normal-state-map (kbd "SPC t") 'helm-etags-select)
@@ -133,7 +120,7 @@
   (after "elisp-slime-nav-autoloads"
     (evil-define-key 'normal emacs-lisp-mode-map (kbd "g d") 'elisp-slime-nav-find-elisp-thing-at-point))
 
-  (after "coffee-mode-autoloads"
+  (after 'coffee-mode
     (evil-define-key 'visual coffee-mode-map (kbd ", p") 'coffee-compile-region)
     (evil-define-key 'normal coffee-mode-map (kbd ", p") 'coffee-compile-buffer))
 
@@ -143,22 +130,24 @@
     (evil-define-key 'normal stylus-mode-map (kbd ", p") 'my-stylus-compile-and-show-buffer))
 
   (after "projectile-autoloads"
-    (define-key evil-normal-state-map (kbd "SPC /")
-      (bind
-       (call-interactively (cond ((executable-find "pt")
-                                  'projectile-pt)
-                                 ((executable-find "ag")
-                                  'projectile-ag)
-                                 ((executable-find "ack")
-                                  'projectile-ack)
-                                 (t
-                                  'projectile-grep)))))
     (define-key evil-normal-state-map (kbd "SPC e") 'projectile-recentf)
     (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
+    (let ((binding (kbd "SPC /")))
+      (cond ((executable-find "pt")
+             (define-key evil-normal-state-map binding 'projectile-pt))
+            ((executable-find "ag")
+             (define-key evil-normal-state-map binding
+	       (bind
+		(setq current-prefix-arg t)
+		(call-interactively #'projectile-ag))))
+            ((executable-find "ack")
+             (define-key evil-normal-state-map binding 'projectile-ack))
+            (t
+             (define-key evil-normal-state-map binding 'projectile-grep))))
     (after "helm-projectile-autoloads"
       (require 'helm-projectile)
       (define-key evil-normal-state-map (kbd "SPC e") 'helm-projectile-recentf)
-      (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file-dwim)))
+      (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile)))
 
   (after "multiple-cursors-autoloads"
     (after 'js2-mode
@@ -182,16 +171,13 @@
 (define-key minibuffer-local-must-match-map [escape] 'my-minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'my-minibuffer-keyboard-quit)
 
-
 (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
 
-(after "magit-autoloads"
+(after 'magit
   (global-set-key (kbd "C-x g") 'magit-status)
-  (after 'magit
-    (define-key magit-status-mode-map (kbd "C-n") 'magit-goto-next-sibling-section)
-    (define-key magit-status-mode-map (kbd "C-p") 'magit-goto-previous-sibling-section)
-    (define-key magit-status-mode-map (kbd "q") 'my-magit-quit-session)))
+  (define-key magit-status-mode-map (kbd "C-n") 'magit-goto-next-sibling-section)
+  (define-key magit-status-mode-map (kbd "C-p") 'magit-goto-previous-sibling-section))
 
 
 (after "project-explorer-autoloads"
@@ -219,7 +205,7 @@
   (define-key ac-completing-map (kbd "C-p") 'ac-previous))
 
 
-(after "company-autoloads"
+(after 'company
   (define-key company-active-map (kbd "C-n") 'company-select-next)
   (define-key company-active-map (kbd "C-p") 'company-select-previous)
   (define-key company-active-map (kbd "<tab>") 'my-company-tab)
@@ -242,6 +228,25 @@
 (unless (display-graphic-p)
   (global-set-key [mouse-4] (bind (scroll-down 1)))
   (global-set-key [mouse-5] (bind (scroll-up 1))))
+
+
+(after "helm-autoloads"
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x C-m") 'helm-M-x)
+  (global-set-key (kbd "C-c C-m") 'helm-M-x)
+  (global-set-key (kbd "C-x b") 'helm-buffers-list))
+
+
+(add-hook 'eshell-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-c h") #'my-eshell-ido-complete-command-history)))
+
+
+(after 'help-mode
+  (define-key help-mode-map (kbd "n") 'next-line)
+  (define-key help-mode-map (kbd "p") 'previous-line)
+  (define-key help-mode-map (kbd "j") 'next-line)
+  (define-key help-mode-map (kbd "k") 'previous-line))
 
 
 (global-set-key [prior] 'previous-buffer)
@@ -280,5 +285,8 @@
     (message "Thou shall not quit!"))
   (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
     (message "Thou shall not quit!")))
+
+(global-set-key (kbd "C-M-<f12>") 'toggle-frame-fullscreen)
+(global-set-key (kbd "C-M-<f11>") 'toggle-frame-maximized)
 
 (provide 'init-bindings)

@@ -12,9 +12,9 @@
 '(haskell-process-log t)
 '(haskell-process-suggest-remove-import-lines t)
 
- (haskell-mode . (
-    ;; Highlight leading space characters in Haskell files.
-    (eval . (highlight-regexp "^ *")))))
+; (haskell-mode . (
+;; Highlight leading space characters in Haskell files.
+; (eval . (highlight-regexp "^ *")))))
 
 (let ((my-cabal-path (expand-file-name "~/.cabal/bin")))
   (setenv "PATH" (concat my-cabal-path ":" (getenv "PATH")))

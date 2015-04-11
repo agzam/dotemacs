@@ -1,4 +1,9 @@
-(defcustom dotemacs-evil-state-modes
+(defgroup dotemacs-evil nil
+  "Configuration options for evil-mode."
+  :group 'dotemacs
+  :prefix 'dotemacs-evil)
+
+(defcustom dotemacs-evil/evil-state-modes
   '(fundamental-mode
     text-mode
     prog-mode
@@ -9,13 +14,26 @@
     compilation-mode)
   "List of modes that should start up in Evil state."
   :type '(repeat (symbol))
-  :group 'dotemacs)
+  :group 'dotemacs-evil)
+
+(defcustom dotemacs-evil/emacs-state-modes
+  '(debugger-mode
+    git-commit-mode
+    git-rebase-mode)
+  "List of modes that should start up in Evil Emacs state."
+  :type '(repeat (symbol))
+  :group 'dotemacs-evil)
+
+(defcustom dotemacs-evil/emacs-cursor
+  "red"
+  "The color of the cursor when in Emacs state."
+  :type 'color)
 
 
 (setq evil-search-module 'evil-search)
 (setq evil-magic 'very-magic)
 
-(setq evil-emacs-state-cursor '("red" box))
+(setq evil-emacs-state-cursor `(,dotemacs-evil/emacs-cursor box))
 (setq evil-normal-state-cursor '("green" box))
 (setq evil-visual-state-cursor '("orange" box))
 (setq evil-insert-state-cursor '("red" bar))
@@ -71,11 +89,14 @@
 (require-package 'evil-numbers)
 
 
-(defun my-enable-evil-mode ()
-  (if (apply 'derived-mode-p dotemacs-evil-state-modes)
+(defun my-major-mode-evil-state-adjust ()
+  (if (apply 'derived-mode-p dotemacs-evil/evil-state-modes)
       (turn-on-evil-mode)
-    (set-cursor-color "red")))
-(add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
+    (set-cursor-color dotemacs-evil/emacs-cursor))
+  (when (apply 'derived-mode-p dotemacs-evil/emacs-state-modes)
+    (turn-off-evil-mode)
+    (set-cursor-color dotemacs-evil/emacs-cursor)))
+(add-hook 'after-change-major-mode-hook #'my-major-mode-evil-state-adjust)
 
 (defun my-send-string-to-terminal (string)
   (unless (display-graphic-p) (send-string-to-terminal string)))
@@ -109,6 +130,25 @@
 
 (defadvice evil-ex-search-previous (after advice-for-evil-ex-search-previous activate)
   (recenter))
+
+(after 'edebug
+  (add-hook 'edebug-mode-hook (lambda ()
+                                (if edebug-mode
+                                    (evil-emacs-state)
+                                  (evil-normal-state)))))
+
+(after 'paren
+  ;; the default behavior only highlights with the point one-after the closing paren
+  ;; this changes it such it will match with the point on the closing paren
+  (defadvice show-paren-function (around show-paren-closing-before activate)
+    (if (and (or
+              (evil-normal-state-p)
+              (evil-visual-state-p))
+             (eq (syntax-class (syntax-after (point))) 5))
+        (save-excursion
+          (forward-char)
+          ad-do-it)
+      ad-do-it)))
 
 (when (>= emacs-major-version 25)
   (defadvice elisp--preceding-sexp (around evil activate)

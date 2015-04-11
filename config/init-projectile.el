@@ -4,6 +4,9 @@
 (setq projectile-cache-file (concat dotemacs-cache-directory "projectile.cache"))
 (setq projectile-known-projects-file (concat dotemacs-cache-directory "projectile-bookmarks.eld"))
 (setq projectile-indexing-method 'alien)
+(setq projectile-enable-caching t)
+(after "helm-autoloads"
+  (setq projectile-completion-system 'helm))
 
 
 (require 'projectile)
@@ -16,6 +19,7 @@
 
 (when (executable-find "ack")
   (require-package 's)
+  (require 's)
   (let ((val (concat "ack -f --print0" (s-join " --ignore-dir=" (cons "" projectile-globally-ignored-directories)))))
     (setq projectile-generic-command val)
     (setq projectile-svn-command val)))

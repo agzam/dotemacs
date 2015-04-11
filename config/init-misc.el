@@ -10,8 +10,8 @@
 
 (require-package 'multiple-cursors)
 (after 'evil
-  (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
-  (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state))
+  (add-hook 'multiple-cursors-mode-enabled-hook #'evil-emacs-state)
+  (add-hook 'multiple-cursors-mode-disabled-hook #'evil-normal-state))
 
 
 (require-package 'wgrep)
@@ -27,11 +27,6 @@
   (setq ag-highlight-search t)
   (add-hook 'ag-mode-hook (lambda () (toggle-truncate-lines t)))
   (require-package 'wgrep-ag))
-
-
-(when (executable-find "ack")
-  (require-package 'ack-and-a-half)
-  (require-package 'wgrep-ack))
 
 
 (require-package 'project-explorer)
@@ -52,8 +47,9 @@
 
 (require-package 'aggressive-indent)
 (require 'aggressive-indent)
-(add-to-list 'aggressive-indent-excluded-modes 'stylus-mode)
-(add-to-list 'aggressive-indent-excluded-modes 'org-mode)
+(add-to-list 'aggressive-indent-excluded-modes #'stylus-mode)
+(add-to-list 'aggressive-indent-excluded-modes #'org-mode)
+(add-to-list 'aggressive-indent-excluded-modes #'vimrc-mode)
 (global-aggressive-indent-mode)
 
 
@@ -69,7 +65,7 @@
 
 
 (require-package 'rainbow-delimiters)
-(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 
 (require-package 'framemove)
@@ -78,6 +74,10 @@
 
 
 (require-package 'discover-my-major)
+
+
+(require-package 'paradox)
+(setq paradox-execute-asynchronously nil)
 
 
 (when (eq system-type 'darwin)
@@ -96,7 +96,6 @@
 
 ;; Evernote
 (setq evernote-username "plotnick")
-(setq evernote-developer-token "S=s9:U=1032d0:E=1519fc6f803:C=14a4815c938:P=1cd:A=en-devtoken:V=2:H=60020889830e06533a55a13fc1d565e7")
 (setq evernote-mode-display-menu nil)
 
 
@@ -133,5 +132,7 @@
 
 (global-set-key [remap next-buffer] 'my-next-buffer)
 (global-set-key [remap previous-buffer] 'my-previous-buffer)
+
+(when window-system (set-frame-size (selected-frame) 200 70))
 
 (provide 'init-misc)

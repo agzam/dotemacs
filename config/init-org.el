@@ -10,8 +10,8 @@
    (setq org-log-done t)
 
    (setq org-startup-indented t)
-   (setq org-indent-indentation-per-level 3)
-   (setq org-hide-leading-stars t)
+   (setq org-indent-indentation-per-level 2)
+   (setq org-src-fontify-natively t)
 
    (setq org-agenda-files `(,org-directory))
    (setq org-capture-templates
@@ -48,18 +48,24 @@
      (setq org-mobile-inbox-for-pull (concat org-directory "/from-mobile.org")))
 
    (after 'evil
-     (add-hook 'org-capture-mode-hook 'evil-insert-state))
+     (add-hook 'org-capture-mode-hook #'evil-emacs-state))
 
    (when (boundp 'org-plantuml-jar-path)
      (org-babel-do-load-languages
       'org-babel-load-languages
       '((plantuml . t))))
 
-   (add-hook 'org-mode-hook (lambda ()
-                              (when (or (executable-find "aspell")
-                                        (executable-find "ispell")
-                                        (executable-find "hunspell"))
-                                (flyspell-mode))))))
+   (defun my-org-mode-hook ()
+     (when (or (executable-find "aspell")
+               (executable-find "ispell")
+               (executable-find "hunspell"))
+       (turn-on-flyspell))
+     (toggle-truncate-lines t))
+   (add-hook 'org-mode-hook #'my-org-mode-hook)
+
+   (require-package 'org-bullets)
+   (setq org-bullets-bullet-list '("✿" "❀" "☢" "☯" "✸" ))
+   (add-hook 'org-mode-hook #'org-bullets-mode)))
 
 
 (provide 'init-org)
